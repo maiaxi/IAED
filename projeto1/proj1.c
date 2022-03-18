@@ -3,7 +3,7 @@
 #include<ctype.h>
 #include<string.h>
 int main(void){
-    char command[1];
+    char command[50];
     int res;
     int i;
     scanf("%s", command);
@@ -15,7 +15,7 @@ int main(void){
         printf("Acabou");
         exit(0);
     }
-    else{
+    else if(res == a){
         printf("vais fazer outra coisa");
     }
     return 0;
