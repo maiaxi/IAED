@@ -21,7 +21,6 @@ int main(void){
             else if(atual < min)
                 min = atual;
         }
-        printf("i:%d\n",i);
     }
     printf("min: %f, max: %f\n", min, max);
     return 0;
