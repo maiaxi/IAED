@@ -38,5 +38,3 @@ int main(void){
     return 0;
 }
 
-
-/*Ele apenas vai printar a linha-dist quando dist<linha*/
