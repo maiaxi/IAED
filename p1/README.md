@@ -5,6 +5,7 @@
 ## LOG alterações
 
 - 14mar22 - Publicação do enunciado.
+- 18mar22 - Adicionados esclarecimentos sobre o formato de output
 
 ## 1. Introdução
 
@@ -43,10 +44,14 @@ O programa não vai ser testado com datas posteriores a 31 de Dezembro de 2023,
 pelo que não vão ocorrer anos bissextos.
 
 No sistema, considera-se que uma data no input ou output refere-se sempre
-ao formato DD-MM-AAAA onde DD denota o dia, MM o mês e AAAA o ano.
+ao formato DD-MM-AAAA onde DD denota o dia (número entre 1 e o último
+dia do mês), MM o mês (número entre 1 e 12) e AAAA o ano (número positivo).
 As horas são também sempre no formato HH:MM onde HH denota a hora
 (número entre 0 e 23) e MM denota os minutos (número entre 0 e 59).
-Note-se nas situações em que o valor é inferior a 10, então o caracter das dezenas é 0.
+Não é necessário validar se os dias, meses, horas, etc. estão dentro
+dos intervalos válidos.
+
+Nas situações em que o valor é inferior a 10, então o caracter das dezenas é 0.
 Por exemplo, o dia 1 de Janeiro de 2022 é denotado por 01-01-2022
 e as 9 horas e 5 minutos é representada por 09:05.
 Finalmente, os períodos de tempo como a duração dos voos segue o formato das horas.
@@ -119,7 +124,7 @@ do que um erro, deverá ser indicado apenas o primeiro.</u>
 
   * __v__ - adiciona um voo ou lista todos os voos:
     * Formato de entrada: `v [<códigoVoo> <IDAeroportoPartida> <IDAeroportoChegada> <dataPartida> <horaPartida> <duração> <capacidade>]`
-    * Formato de saída: `<códigoVoo> <IDAeroportoPartida> <IDAeroportoChegada> <dataPartida> <horaPartida>` por cada voo, pela ordem de criação ou nada, se for criado um novo voo.
+    * Formato de saída: `<códigoVoo> <IDAeroportoPartida> <IDAeroportoChegada> <dataPartida> <horaPartida>` por cada voo adicionado, pela ordem de criação ou nada, se for criado um novo voo.
     * Erros:
         * `invalid flight code` no caso do código do voo não ser uma string com duas maíusculas seguida por digitos (entre 1 a 4 digitos).
         * `flight already exists` no caso de já existir um voo com o mesmo código para o mesmo dia.
@@ -131,13 +136,13 @@ do que um erro, deverá ser indicado apenas o primeiro.</u>
 
   * __p__ - lista os voos com partida de um aeroporto:
     * Formato de entrada: `p <IDAeroporto>`
-    * Formato de saída: `<códigoVoo> <IDAeroportoChegada> <dataPartida> <horaPartida>` por cada voo, um por linha ordenados por data e hora de partida.
+    * Formato de saída: `<códigoVoo> <IDAeroportoChegada> <dataPartida> <horaPartida>` por cada voo, um por linha ordenados por data e hora de partida. Os voos são ordenados da data e hora mais antigas para a mais recente. Num aeroporto não há dois voos com a mesma hora de partida no mesmo dia.
     * Erros:
         * `<IDAeroporto>: no such airport ID` no caso de não existir o aeroporto indicado.
 
   * __c__ - lista os voos com chegada a um aeroporto:
     * Formato de entrada: `c <IDAeroporto>`
-    * Formato de saída: `<códigoVoo> <IDAeroportoPartida> <dataChegada> <horaChegada>` por cada voo, um por linha ordenados por data e hora de chegada.
+    * Formato de saída: `<códigoVoo> <IDAeroportoPartida> <dataChegada> <horaChegada>` por cada voo, um por linha ordenados por data e hora de chegada. Os voos são ordenados da data e hora mais antigas para a mais recente. Num aeroporto não há dois voos com a mesma hora de chegada no mesmo dia.
     * Erros:
         * `<IDAeroporto>: no such airport ID` no caso de não existir o aeroporto indicado.
 
