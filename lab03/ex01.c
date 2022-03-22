@@ -24,3 +24,4 @@ void quadrado(int n){
         }
     }
 }
+
