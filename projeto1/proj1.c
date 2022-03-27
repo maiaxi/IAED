@@ -6,23 +6,25 @@
 #define DIM 88
 #define AIRPORTS_MAX 40
 
-struct airport{
-    char id[3];
+typedef struct airport {
+    char id[4];
     char country[30];
     char city[50];
     int incflights;
     int outflights;
-};
+}airport;
 
 struct airport list_airports[AIRPORTS_MAX];
 
 int main(void);
 
 char* getid(char *command,char *id){
+    char com1[88];
     int i = 2, e = 0;
     int idsize;
+    strcpy(com1, command);
     while (i < 5 ){
-        id[e] = command[i];
+        id[e] = com1[i];
         e++;
         i++;
     }
@@ -40,20 +42,25 @@ char* getid(char *command,char *id){
     return id;
 }
 
-void getcountry(char* command, char* country){
+char* getcountry(char* command, char* country){
     int i = 6, e = 0;
-    while (command[i]!= ' '){
-        country[e] = command[i];
+    char com2[88];
+    strcpy(com2, command);
+    while (com2[i]!= ' '){
+        country[e] = com2[i];
         e++;
         i++;
     }
+    return country;
 }
 
-void getcity(char* command, char* city){
+char* getcity(char* command, char* city){
     int i = 6, e = 0;
     int size;
-    size = strlen(command);
-    while (command[i]!= ' '){
+    char com3[88] ;
+    strcpy(com3,command);
+    size = strlen(com3);
+    while (com3[i]!= ' '){
         e++;
         i++;
     }
@@ -62,23 +69,42 @@ void getcity(char* command, char* city){
         e = 0;
     }
     while (i < size){
-        city[e] = command [i];
+        city[e] = com3[i];
         i++;
         e++;
     }
+    return city;
 }
 
 
 void newapt(char * command){
-    struct airport apt;
-    char id[3];
+    airport apt;
+    char id[4];
     char country[30];
     char city[50];
-    getid(command, id);
+    /*int i = 0, equal;*/
+    getid(command,id);
     getcountry(command, country);
     getcity(command, city);
-    strcpy(apt.id , id);
-    printf("airport %s", apt.id);
+    strcpy(apt.id, id);
+    strcpy(apt.country, country);
+    strcpy(apt.city, city);
+    apt.incflights = 0;
+    apt.outflights = 0;
+    /*for (i = 0 ; i <= AIRPORTS_MAX; i++){
+        equal = strcmp(list_airports[i].id,apt.id);
+        if(list_airports[i].buf != NULL){
+            if(equal == 0){
+                printf("duplicate airport");
+                main();
+            }
+        }       
+        else if(list_airports[i].buf == NULL){
+            list_airports[i] = apt; 
+        }
+    }*/
+    printf("airport: %s ", apt.id);
+    main();
 }
 
 int main(void){
