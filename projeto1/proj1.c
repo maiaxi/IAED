@@ -3,7 +3,7 @@
 #include<ctype.h>
 #include<string.h>
 
-#define DIM 88
+#define DIM 161
 #define AIRPORTS_MAX 40
 
 typedef struct airport {
@@ -29,10 +29,12 @@ char* getid(char *command,char *id){
     idsize = strlen(id);
     if (idsize != 3){
         printf("invalid airport ID");
+        return "\000";
     }
     for (i=0; i<idsize; i++){
         if (id[i]<65 || id[i] > 90){
             printf("invalid airport ID");
+            return "\000";
         }
     }
     return id;
@@ -92,8 +94,9 @@ Airport newApt(char * command){
 
 void addApt(Airport apt){
     int i = 0 , equal,empty;
-    char *idd = list_airports[i].id;
+    char *idd;
     for (i = 0 ; i <= AIRPORTS_MAX; i++){
+        idd = list_airports[i].id;
         empty = strcmp(idd, "\000"),
         equal = strcmp(list_airports[i].id, apt.id);
         if (empty != 0){
@@ -107,25 +110,69 @@ void addApt(Airport apt){
             printf("airport %s", list_airports[i].id);
             break;
         }
-        else if (i = AIRPORTS_MAX){
+        else if (i == AIRPORTS_MAX){
             printf("too many airports");
             break;
         }
     }
 }
 
-void listApt(command);
+void listApt(char *command){
+    if (strlen(command) == 1){
+        int i = 0, e = 0, empty,size = 0;
+        char *idd = list_airports[e].id;
+        empty = strcmp(idd, "\000");
+        for(e = 0; empty != 0 ; e++){
+            idd = list_airports[e].id;
+            empty = strcmp(idd, "\000");
+            if (empty == 0){
+                break;
+            }
+            size++;
+        }
+        for(i = 0; i < size; i++){
+            printf("id: %s \n",list_airports[i].id);
+        }
+    }
+    else{
+        char ids[40];
+        char id[4];
+        char *pids[40];
+        int i = 0, e = 0,f = 0;
+        int size = strlen(command);
+        for(i = 2; i < size; i++){
+            if(command[i] != ' ' || command[i] != '\t' || command[i] != '\0'){
+                id[e] = command[i];
+                e++;
+            }
+            else if (command[i] == ' ' || command[i + 1] == '\t'){
+                strcpy(pids[f], id);
+                e = 0;
+                f++;
+            }
+            else{
+                break;
+            }
+        }
+        printf("%s", ids);
+    }
+}
 
+void
 
 int main(void){
     char command[DIM];
     while (command[0]!= 'q'){
         scanf("%[^\n]%*c", command);
         switch (command[0]){
-            case ('a'):
+            case 'a':
                 addApt(newApt(command));
-            case ('l'):
+                break;
+            case 'v':
+                newFlight(command);
+            case 'l':
                 listApt(command);
+                break;
         }
     }
     return 0;
