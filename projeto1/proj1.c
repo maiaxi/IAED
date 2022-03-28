@@ -17,7 +17,7 @@ typedef struct airport {
 Airport list_airports[AIRPORTS_MAX];
 
 char* getid(char *command,char *id){
-    char com1[88];
+    char com1[DIM];
     int i = 2, e = 0;
     int idsize;
     strcpy(com1, command);
@@ -40,9 +40,10 @@ char* getid(char *command,char *id){
     return id;
 }
 
+
 char* getcountry(char* command, char* country){
     int i = 6, e = 0;
-    char com2[88];
+    char com2[DIM];
     strcpy(com2, command);
     while (com2[i]!= ' ' && com2[i]!= '\t'){
         country[e] = com2[i];
@@ -52,10 +53,11 @@ char* getcountry(char* command, char* country){
     return country;
 }
 
+
 char* getcity(char* command, char* city){
     int i = 6, e = 0;
     int size;
-    char com3[88] ;
+    char com3[DIM] ;
     strcpy(com3,command);
     size = strlen(com3);
     while (com3[i]!= ' '){
@@ -78,8 +80,8 @@ char* getcity(char* command, char* city){
 Airport newApt(char * command){
     Airport apt;
     char id[4];
-    char country[30];
-    char city[50];
+    char country[31];
+    char city[51];
     getid(command,id);
     getcountry(command, country);
     getcity(command, city);
@@ -91,6 +93,7 @@ Airport newApt(char * command){
     
     return apt;
 }
+
 
 void addApt(Airport apt){
     int i = 0 , equal,empty;
@@ -117,48 +120,59 @@ void addApt(Airport apt){
     }
 }
 
+
+void sort(char list[40][4], int size){
+    int i = 0, compare = 0, minors = 0;
+    char temp[4];
+    for (i = 0; i < size; i++){
+        compare = strcmp(list[i], list[i+1]);   /*if >0 , list[i]>list[i+1] */
+        if (minors == size-1){
+            break;
+        }
+        if(compare > 0){
+            minors = 0;
+            if(i + 1 == size){
+                i=-1;
+            }
+            else{
+                strcpy(temp, list[i]);
+                strcpy(list[i], list[i+1]);
+                strcpy(list[i+1], temp);    
+            }
+        }
+        if(compare < 0){
+            minors++;
+            if(i + 1 == size){
+                i=-1;
+}   }   }   }
+
+
 void listApt(char *command){
     if (strlen(command) == 1){
-        int i = 0, e = 0, empty,size = 0;
+        int i = 0, e = 0, empty, size = 0, y = 0,z = 0, equalid = 0;
+        char idlist[40][4];
         char *idd = list_airports[e].id;
         empty = strcmp(idd, "\000");
         for(e = 0; empty != 0 ; e++){
             idd = list_airports[e].id;
             empty = strcmp(idd, "\000");
             if (empty == 0){
-                break;
-            }
-            size++;
+                break;  }
+            size++; }
+        for (i = 0; i<size; i++){
+            strcpy (idlist[i], list_airports[i].id);    
         }
-        for(i = 0; i < size; i++){
-            printf("id: %s \n",list_airports[i].id);
-        }
-    }
-    else{
-        char ids[40];
-        char id[4];
-        char *pids[40];
-        int i = 0, e = 0,f = 0;
-        int size = strlen(command);
-        for(i = 2; i < size; i++){
-            if(command[i] != ' ' || command[i] != '\t' || command[i] != '\0'){
-                id[e] = command[i];
-                e++;
-            }
-            else if (command[i] == ' ' || command[i + 1] == '\t'){
-                strcpy(pids[f], id);
-                e = 0;
-                f++;
-            }
-            else{
-                break;
-            }
-        }
-        printf("%s", ids);
-    }
-}
+        sort(idlist, size);
+        while( y < size){
+            equalid = strcmp(idlist[y],list_airports[z].id);
+            if (equalid == 0){
+                printf("%s %s %s #%d ", list_airports[z].id, list_airports[z].city, list_airports[z].country, list_airports[z].outflights);
+                y++;
+                z = 0;  }
+            else if (equalid != 0){
+                z++;
+}   }   }   }
 
-void
 
 int main(void){
     char command[DIM];
@@ -168,12 +182,12 @@ int main(void){
             case 'a':
                 addApt(newApt(command));
                 break;
-            case 'v':
-                newFlight(command);
             case 'l':
+                printf("id: %s city: %s country:%s flights: %d", list_airports[0].id, list_airports[0].city, list_airports[0].country, list_airports[0].outflights);
                 listApt(command);
                 break;
         }
     }
     return 0;
 }
+
