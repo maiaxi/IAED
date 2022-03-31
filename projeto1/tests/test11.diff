@@ -1,4 +1,25 @@
-4a5,19
+1,16c1,19
+< airport AAB Portugal
+< airport AAA Portugal
+< airport AAD Espanha
+< airport AAC Alemanha
+< invalid flight code
+< invalid flight code
+< invalid flight code
+< invalid flight code
+< invalid flight code
+< invalid flight code
+< invalid flight code
+< invalid flight code
+< invalid flight code
+< invalid flight code
+< invalid flight code
+< invalid flight code
+---
+> airport AAB
+> airport AAA
+> airport AAD
+> airport AAC
 > AA1111 AAA AAD 16-03-2022 14:50
 > AA1111 AAA AAD 16-03-2022 14:50
 > AA1112 AAB AAC 16-03-2022 14:50

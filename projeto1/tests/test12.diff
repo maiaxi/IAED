@@ -1,4 +1,21 @@
-4a5,12
+1,12c1,12
+< airport AAB Portugal
+< airport AAA Portugal
+< airport AAD Espanha
+< airport AAC Alemanha
+< invalid flight code
+< invalid flight code
+< invalid flight code
+< invalid flight code
+< invalid flight code
+< invalid flight code
+< invalid flight code
+< invalid flight code
+---
+> airport AAB
+> airport AAA
+> airport AAD
+> airport AAC
 > AAE: no such airport ID
 > AA7 AAB 15-03-2022 23:59
 > AA6 AAD 16-03-2022 13:45

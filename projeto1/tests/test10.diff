@@ -1,0 +1,30 @@
+1,7c1,11
+< airport AAB Portugal
+< airport AAA Portugal
+< airport AAD Espanha
+< airport AAC Alemanha
+< AAB AAA AAD AAC aaa: no such airport ID
+< AAA: no such airport ID
+< AAA: no such airport ID
+---
+> airport AAB
+> airport AAA
+> airport AAD
+> airport AAC
+> AAA Portalegre Portugal 0
+> AAB Freixo de Espada a Cinta Portugal 0
+> AAC Potsdam Alemanha 0
+> AAD Ayamonte Espanha 0
+> aaa: no such airport ID
+> AAA Portalegre Portugal 0
+> AAA Portalegre Portugal 0
+9,12c13,16
+< AAB: no such airport ID
+< AAB: no such airport ID
+< AAC: no such airport ID
+< AAA: no such airport ID
+---
+> AAB Freixo de Espada a Cinta Portugal 0
+> AAB Freixo de Espada a Cinta Portugal 0
+> AAC Potsdam Alemanha 0
+> AAA Portalegre Portugal 0

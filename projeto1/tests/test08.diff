@@ -1,4 +1,25 @@
-3a4,45
+1,17c1,45
+< airport LIS	Portugal
+< airport OPO	Portugal
+< airport FAO	Portugal
+< OPO: no such airport 
+< OPO: no such airport 
+< FAO: no such airport 
+< FAO: no such airport 
+< OPO: no such airport 
+< OPO: no such airport 
+< FAO: no such airport 
+< FAO: no such airport 
+< OPO: no such airport 
+< OPO: no such airport 
+< FAO: no such airport 
+< FAO: no such airport 
+< OPO: no such airport 
+< FAO: no such airport 
+---
+> airport LIS
+> airport OPO
+> airport FAO
 > TP13 LIS OPO 23-03-2022 13:10
 > TP11 LIS OPO 23-03-2022 11:10
 > TP326 LIS FAO 23-03-2022 16:31

@@ -1,0 +1,31 @@
+1,10c1,18
+< airport LIS	Portugal
+< airport OPO	Portugal
+< airport FAO	Portugal
+< airport FNC	Portugal
+< airport PXO	Portugal
+< airport PDL	Portugal
+< airport TER	Portugal
+< airport HOR	Portugal
+< airport SMA	Portugal
+< LIS	OPO	FAO	FNC	PXO	PDL	TER	HOR	SMA	
+\ No newline at end of file
+---
+> airport LIS
+> airport OPO
+> airport FAO
+> airport FNC
+> airport PXO
+> airport PDL
+> airport TER
+> airport HOR
+> airport SMA
+> FAO Faro Portugal 0
+> FNC Funchal Portugal 0
+> HOR Horta Portugal 0
+> LIS Lisbon Lisboa Portugal 0
+> OPO Porto Portugal 0
+> PDL Ponta Delgada Portugal 0
+> PXO Porto Santo Portugal 0
+> SMA Santa Maria Portugal 0
+> TER Terceira Portugal 0
