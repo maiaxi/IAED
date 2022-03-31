@@ -62,27 +62,30 @@ int Pow(int x, int y){    /* Function pow that works as the funcion pow defined 
 
 
 int day(char *command, int i){
-    int digit1, digit2, newday;
+    int digit1, digit2, day;
     digit1 = command[i] - '0';
     digit2 = command[i+1] - '0';
-    newday = digit1*10 + digit2;
-    return newday;
+    day = digit1*10 + digit2;
+    return day;
 }
+
+
 int month(char *command, int i){
-    int digit1, digit2, newmonth;
+    int digit1, digit2, month;
     digit1 = command[i] - '0';
     digit2 = command[i+1] - '0';
-    newmonth = digit1*10 + digit2;
-    return newmonth;
+    month = digit1*10 + digit2;
+    return month;
 }
+
+
 int year(char *command, int i){
-    int digit1, digit2, digit3 , digit4, newyear;
+    int digit1, digit2, digit3 , digit4, year;
     digit1 = command[i] - '0';
     digit2 = command[i+1] - '0';
     digit3 = command[i+2] - '0';
     digit4 = command[i+3] - '0';
-    newyear = digit1*1000 + digit2*100 + digit3*10 + digit4;
-    return newyear;
+    year = digit1*1000 + digit2*100 + digit3*10 + digit4;
 }
 
 
@@ -151,25 +154,35 @@ int getnext(char *command, int index){
     return i;
 }
 
-int hour_minutes(char *command, int i){
-    int digit1, digit2, num;
+int get_hour(char *command, int i){
+    int digit1, digit2, hour;
     digit1 = command[i] - '0';
     digit2 = command[i+1] - '0';
-    num = digit1*10 + digit2;
-    return num;
+    hour = digit1*10 + digit2;
+    i += 3;
+    return hour;
 }
 
 
-int get_capacity(char *command,int index){
-    int i = index, e, size, digitnumbers, number = 0, digit;
+int get_minutes(char *command, int i){
+    int digit1, digit2, minute;
+    digit1 = command[i] - '0';
+    digit2 = command[i+1] - '0';
+    num = digit1*10 + digit2;
+    return minute;
+}
+
+
+void get_capacity(char *command,int capacity ,int index){
+    int i = index, e, size, digitnumbers, digit;
+    capacity = 0;
     size = strlen(command);
     digitnumbers = size - i;
     for (e = digitnumbers; i < size; i++){
         digit = command[i] - '0';
-        number = number + digit*Pow(10, e-1);
+        capacity = capacity + digit*Pow(10, e-1);
         e--;
     }
-    return number;
 }
 
 
@@ -204,44 +217,33 @@ int validId(char *id){
     return 1; 
 }
 
-char* getid(char *command, char *id){
-    char com1[COM_DIM];
-    int i = 2, e = 0;
-    strcpy(com1, command);
-    while (i <= 4 ){
-        id[e] = com1[i];
+int getid(char *command, char *id,int index){
+    int i = index, e = 0;
+    for (i = index; command[i] != ' ' && command[i] != '\t'; i++){
+        id[e] = command[i];
         e++;
-        i++;
     }
-    return id;
+    return i;
 }
 
 
-char* getcountry(char* command, char* country){
-    int i = 6, e = 0;
-    char com2[COM_DIM];
-    strcpy(com2, command);
-    while (com2[i]!= ' ' && com2[i]!= '\t'){
-        country[e++] = com2[i++];
+int getcountry(char* command, char* country, int index){
+    int i, e = 0;
+    for (i = index; command[i] != ' ' && command[i]!= '\t'; i++){
+        country[e] = command[i];
+        e++;
     }
-    country[e]='\0';
-    return country;
+    return i;
 }
 
 
-char* getcity(char* command, char* city){
-    int i = 6, e = 0;
-    int size;
-    char com3[COM_DIM] ;
-    strcpy(com3,command);
-    size = strlen(com3);
-    for (i = 6; com3[i]!= ' ' && com3[i]!= '\t'; i++){
-    }
-    for (i++; i <= size; i++){
-        city[e] = com3[i];
+void getcity(char* command, char* city, int index){
+    int i , e = 0, len;
+    len = strlen(command);
+    for (i = index; i < len; i++){
+        city[e] = command[i];
         e++;
     }
-    return city;
 }
 
 
@@ -330,7 +332,7 @@ void specific_list(char *com){
 
 
 void emptyl(void){
-    int i = 0, e = 0, empty, size = 0, y = 0,z = 0, equalid = 0;
+    int i = 0, e = 0, empty, size = 0, y = 0,z = 0, equalid = 0, citylen, countrylen;
     char idlist[AIRPORTS_MAX][ID_SIZE];
     char *idd = list_airports[e].id;
     empty = strcmp(idd, "\000");
@@ -349,7 +351,9 @@ void emptyl(void){
     while( y < size){
         equalid = strcmp(idlist[y],list_airports[z].id);
         if (equalid == 0){
-            printf("%s %s %s %d\n", list_airports[z].id, list_airports[z].city, list_airports[z].country, list_airports[z].departures);
+            citylen = strlen(list_airports[z].city);
+            countrylen = strlen(list_airports[z].country);
+            printf("%s %.*s %.*s %d\n", list_airports[z].id, citylen, list_airports[z].city, countrylen, list_airports[z].country, list_airports[z].departures);
             y++;
             z = 0;
         }
@@ -370,25 +374,53 @@ void listApt(char *command){
     }
 }
 
-void newApt(char * command){
+
+void emptyid(char *id){
+    int i;
+    for (i = 0; i != ID_SIZE; i++){
+        id[i] = '\0';
+    }
+}
+
+
+void emptycountry(char *country){
+    int i;
+    for (i = 0; i != COUNTRY_SIZE; i++){
+        country[i] = '\0';
+    }
+}
+
+void emptycity(char *city){
+    int i;
+    for (i = 0; i != CITY_SIZE; i++){
+        city[i] = '\0';
+    }
+}
+void newApt(char *command){
     Airport apt;
     char id[ID_SIZE];
     char country[COUNTRY_SIZE];
     char city[CITY_SIZE];
-    int i = 0 , empty;
-    getid(command,id);
-    getcountry(command, country);
-    getcity(command, city);
+    int i = 1 , empty;
+    emptyid(id);
+    emptycountry(country);
+    emptycity(city);    
+    i = getnext(command, i);
+    i = getid(command, id, i);
+    i = getnext(command, i);
+    i = getcountry(command, country, i);
+    i = getnext(command, i);
+    getcity(command, city, i);
     strcpy(apt.id, id);
     strcpy(apt.country, country);
     strcpy(apt.city, city);
     apt.departures = 0;
     if (validId(apt.id) == 1 ){
         for (i = 0 ; i < AIRPORTS_MAX; i++){
-            empty = strcmp(list_airports[i].id, "\0");
+            empty = strcmp(list_airports[i].id, "\0\0\0");
             if (empty == 0){
                 list_airports[i] = apt;
-                printf("airport %s\n", list_airports[i].id);
+                printf("airport %.*s\n", ID_SIZE-1,list_airports[i].id);
                 break;
             }
         }
@@ -400,17 +432,17 @@ int getday(char *command){
     int i;
     for (i = 1; command[i] == ' ' || command[i] == '\t'; i++){
     }
-    return i ;
+    return i;
 }
 
-int getmonth(char *command, int index){
+int get_month(char *command, int index){
     int i;
     for (i = index; command[i] != '-'; i++){
     }
     return i + 1;
 }
 
-int getyear(char*command, int index){
+int get_year(char*command, int index){
     int i;
     for (i = index; command[i] != '-'; i++){
     }
@@ -466,7 +498,6 @@ int validflight(Flight flight){
         return 0;
     }
     if (dupId(flight.departure) == 0){
-        printf("aqui");
         printf("%s: no such airport \n", flight.departure);
         return 0;
     }
@@ -490,70 +521,81 @@ int validflight(Flight flight){
 }
 
 
-void newFlight(char *command){
-    Flight flight;
-    Hour dpthour, tempduration;
-    Date temp;
-    char id[F_IDSIZE], arrival[ID_SIZE], departure[ID_SIZE];
-    int i, e = 0, valid, empty, tempcapacity, index;
-    for (i = 1; command[i] == ' ' || command[i] == '\t'; i++){
-    }
-    
-    for (i = i; command[i] != ' ' && command[i] != '\t'; i++){
+
+int getfid(char *command, char *id,int index){
+    int i, e = 0;
+    for (i = index; command[i] != ' ' && command[i] != '\t'; i++){
         id[e] = command[i];
         e++;
     }
-    e = 0;
-    i = getnext(command, i);
-    index = i;
+    return getnext(command, i);
+}
+int getdeparture(char *command, char *departure,int index){
+    int i, e = 0;
     for (i = index; command[i] != ' ' && command[i] != '\t'; i++){
         departure[e] = command[i];
         e++;
-    }
-    e = 0;
-    i = getnext(command, i);
-    index = i;
+    }    
+    return getnext(command, i);
+}
+
+
+int getarrival(char *command,char *arrival, int index){
+    int i, e = 0;
     for (i = index; command[i] != ' ' && command[i] != '\t'; i++){
         arrival[e] = command[i];
         e++;
     }
-    i = getnext(command, i);
-    temp.day = day(command, i);
-    i = getmonth(command, i);
-    temp.month = month(command, i);
-    i = getyear(command, i);
-    temp.year = year(command, i);
+    return getnext(command, i);
+}
+
+int get_date(char *command, Date *date, int index){
+    int i = index;
+    date.day = day(command, i);
+    i = get_month(command, i);
+    date.month = month(command, i);
+    i = get_year;
+    date.year = year(command, i);
     i += 4;
     i = getnext(command, i);
-    dpthour.hour = hour_minutes(command, i);
+    return i;
+}
+
+int get_time(char *command, Hour *hour, int i){
+    hour.hour = get_hour(command, i);
     i += 3;
-    dpthour.minutes = hour_minutes(command, i);
-    i += 2;
+    hour.minuts = get_minutes(command, i);
+    i = i+2;
+    return i;
+}
+
+
+void newFlight(char *command){
+    Flight flight;
+    int i, valid, empty;
+    for (i = 1; command[i] == ' ' || command[i] == '\t'; i++){
+    }
+    i = getfid(command, flight.id, i);
+    i = getdeparture(command, flight.departure, i);
+    i = getarrival(command, flight.arrival, i);
+    i = get_date(command, flight.date, i);
+    i = get_time(command, flight.departure_hour, i);
     i = getnext(command, i);
-    tempduration.hour = hour_minutes(command, i);
-    i += 3;
-    tempduration.minutes = hour_minutes(command, i);
-    i += 2;
+    i = get_time(command), flight.duration, i);
     i = getnext(command, i);
-    tempcapacity = get_capacity(command, i);
-    strcpy(flight.id, id);
-    strcpy(flight.departure, departure);
-    strcpy(flight.arrival, arrival);
-    flight.date = temp;
-    flight.departure_hour = dpthour;
-    flight.duration = tempduration;
-    flight.capacity = tempcapacity;
+    get_capacity(command, flight.capacity, i);
     valid = validflight(flight);
     if(valid == 1){
-        empty = strcmp(list_flights[FLIGHTS_MAX-1].id, "\000");
+        empty = strcmp(list_flights[FLIGHTS_MAX-1].id, "\0\0\0\0\0");
         if (empty != 0){
             printf("too many flightn\n");
         }
         else{
             for (i = 0; i < FLIGHTS_MAX; i++){
-                empty = strcmp(list_flights[FLIGHTS_MAX-1].id, "\000");
-                if (empty != 0){
+                empty = strcmp(list_flights[i].id, "\0\0\0\0\0");
+                if (empty == 0){
                     list_flights[i] = flight;
+                    break;
                 }
             }
         }
@@ -577,16 +619,32 @@ void printdate(Date date){
         }
 }
 
+void printhour(Hour hour){
+    if (hour.hour < 10 && hour.minutes < 10){
+        printf("0%d:0%d", hour.hour, hour.minutes);
+    }
+    if (hour.hour >= 10 && hour.minutes < 10){
+        printf("%d:0%d", hour.hour, hour.minutes);
+    }
+    if (hour.hour < 10 && hour.minutes >= 10){
+        printf("0%d:%d", hour.hour, hour.minutes);
+    }
+    if (hour.hour >= 10 && hour.minutes >= 10){
+        printf("%d:%d", hour.hour, hour.minutes);
+    }
+}
 
 void list_all_Flights(void){
     int i, empty;
     for (i = 0; i < FLIGHTS_MAX; i++){
-        empty = strcmp(list_flights[i].id, "\000");
+        empty = strcmp(list_flights[i].id, "\0\0\0");
         if (empty == 0){
             break;
         }
-        printf("%s %s %s ",list_flights[i].id, list_flights[i].departure, list_flights[i].arrival);
+        printf("%s %.3s %.3s ",list_flights[i].id, list_flights[i].departure, list_flights[i].arrival);
         printdate(list_flights[i].date);
+        printf(" ");
+        printhour(list_flights[i].departure_hour);
         printf("\n");
     }
 }
@@ -607,11 +665,9 @@ void changedate(char *command){
     Date temp;
     for (i = 1; command[i]== ' '; i++){
     }
-    temp.day = day(command, i);
-    i = getmonth(command, i);
-    temp.month  = month(command, i);
-    i = getyear(command, i);
-    temp.year = year(command, i);
+    day(command, temp.day, i);
+    month(command, temp.month, get_month(command, i));
+    year(command, temp.year, get_year(command, i));
     if (validate(temp) == 1){
         today.day = temp.day;
         today.month = temp.month;
@@ -632,7 +688,7 @@ int main(void){
     today.year = 2022;
     while (command[0]!= 'q'){
         scanf("%[^\n]%*c", command);
-        switch (command[0]){
+          switch (command[0]){
             case 'a':
                 newApt(command);
                 break;
@@ -648,3 +704,4 @@ int main(void){
     }
     return 0;
 }
+    
