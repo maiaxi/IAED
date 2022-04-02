@@ -91,12 +91,15 @@ int year(char *command, int i){
     return year;
 }
 
+
 int equaldate(Date date1, Date date2){  /*equaldate: receives 2 Dates and returns 1 if they are equal and 0 if they are not equal*/
     if (date1.day == date2.day && date1.month == date2.month && date1.year == date2.year){
         return 1;
     } 
     return 0;
 }
+
+
 int dupfid(char *id, int tday, int tmonth, int tyear){  /*dupfid: receives a Flight ID, a day, a month and a year. Returns 0 a flight with that Flight ID exists on that day*/
     int i, equal, empty;
     Date date;
@@ -116,6 +119,7 @@ int dupfid(char *id, int tday, int tmonth, int tyear){  /*dupfid: receives a Fli
     return 0;
 }
 
+
 int FlightbyId(char *id){   /*Flightbyid: receives a Flight ID and returns the flight position on List_airports*/
     int i, equal;
     for (i = 0; i < FLIGHTS_MAX; i++){
@@ -133,12 +137,12 @@ int validatefid(char *id){  /*validatefid: receives a Flight ID and returns 1 if
     len = strlen(id);
     for (i = 0; i < len; i++){
         if (0 <= i && i < 2){
-            if (id[i] < 65 || id[i] > 90){
+            if (id[i] < 'A' || id[i] > 'Z'){
                 return 0;
             }
         }
         if (i > 1){
-            if (id[i] < 48 || id[i] > 57){
+            if (id[i] < '0' || id[i] > '9'){
                 return 0;
             }
         }
@@ -216,6 +220,7 @@ int validId(char *id){  /*validID: receives a Airport ID and returns 1 if the id
     return 1; 
 }
 
+
 int getid(char *command, char *id, int index){  /*getid: receives the command, the id and an index of the first ID letter position. Returns the position of the next empty space*/
     int i = index, e = 0;
     for (i = index; command[i] != ' ' && command[i] != '\t'; i++){
@@ -249,6 +254,8 @@ void getcity(char* command, char* city, int index){ /*getcity: receives the comm
 void sort(char list[AIRPORTS_MAX][ID_SIZE], int size){  /*sort: receives an array of ID's and the number of ID's and sorts*/
     int i = 0, compare = 0, minors = 0;
     char temp[ID_SIZE];
+    /*compares i position id with i + 1 position id and if i position i > i + i, switch places. If i position < i + 1 position
+        increments minors by 1 and if minors = size - 1 (number of comparations), the list is sorted and breaks the loop*/
     for (i = 0; i < size; i++){
         compare = strcmp(list[i], list[i+1]);   /*if >0 , list[i]>list[i+1] */
         if (minors == size-1){
@@ -272,6 +279,7 @@ void sort(char list[AIRPORTS_MAX][ID_SIZE], int size){  /*sort: receives an arra
             }   
 }   }   }
 
+
 int AptbyId(char *id){  /*AptbyID: receives an Airport ID an id and returns his position in list_airports*/
     int i, equal;
     char idd[ID_SIZE];
@@ -284,6 +292,7 @@ int AptbyId(char *id){  /*AptbyID: receives an Airport ID an id and returns his 
     }
     return -1;
 }
+
 
 void specific_list(char *com){  /*specific_list: receives a command and prints all asked airpots*/
     char idsarray[AIRPORTS_MAX][ID_SIZE], actualid[ID_SIZE];
@@ -328,21 +337,17 @@ void specific_list(char *com){  /*specific_list: receives a command and prints a
 }
 
 
-void emptyl(void){  /*emptyl: prints all airports in list_airports*/
-    int i = 0, e = 0, empty, size = 0, y = 0,z = 0, equalid = 0, citylen, countrylen;
+void emptyl(){  /*emptyl: prints all airports in list_airports */
+    int i = 0, empty = 0, size = 0, y = 0,z = 0, equalid = 0, citylen, countrylen;
     char idlist[AIRPORTS_MAX][ID_SIZE];
-    char *idd = list_airports[e].id;
-    empty = strcmp(idd, "\000");
-    for(e = 0; empty != 0 ; e++){
-        idd = list_airports[e].id;
-        empty = strcmp(idd, "\000");
+    /*copy all airports id to char idlist and increments the size, wich is how much airports there are in lis_airports*/
+    for (i = 0; i < AIRPORTS_MAX; i++){
+        empty = strcmp(list_airports[i].id, "");
         if (empty == 0){
-            break;  
+            break;
         }
-        size++; 
-    }
-    for (i = 0; i<size; i++){
-        strcpy (idlist[i], list_airports[i].id);    
+        strcpy(idlist[i], list_airports[i].id);
+        size++;
     }
     sort(idlist, size);
     while( y < size){
@@ -360,9 +365,12 @@ void emptyl(void){  /*emptyl: prints all airports in list_airports*/
     }   
 }      
 
+
 Date get_date(char *command ,int i){    /*get_date: receives a command and the postiion of the hour. Returns the Date*/
     Date temp;
     temp.day = day(command, i);
+    /*it increments i by 3 because there are 2 characters in the middle and the next number
+        is at position + 3 */
     i += 3;
     temp.month = month(command, i);
     i += 3;
@@ -375,9 +383,7 @@ void listApt(char *command){    /*lisapt: receives a command and calls the right
     if (strlen(command) == 1){
         emptyl();
     }
-    else{
-        specific_list(command);
-    }
+    specific_list(command);
 }
 
 
@@ -402,6 +408,8 @@ void emptycity(char *city){ /*emptcity: clears city*/
         city[i] = '\0';
     }
 }
+
+
 void newApt(char *command){ /*newApt: receives a command and */
     Airport apt;
     char id[ID_SIZE];
@@ -433,6 +441,7 @@ void newApt(char *command){ /*newApt: receives a command and */
     }
 }
 
+
 int validate(Date temp){    /* validate: receives a date and returns 1 if the date is valid*/
     if (temp.year < today.year){
         return 0;
@@ -453,6 +462,7 @@ int validate(Date temp){    /* validate: receives a date and returns 1 if the da
     }
     return 1;
 }
+
 
 int validflight(Flight flight){ /*validflight: receives a flight and returns 1 if it is valid and prints the error*/
     int empty;
@@ -496,7 +506,7 @@ int validflight(Flight flight){ /*validflight: receives a flight and returns 1 i
 
 Hour get_arrival_hour(Hour departure_hour, Hour duration){  /*get_arrival_hour: reveives the departure hour and the flight durations and returns the arrival hour*/
     Hour arrival_hour;
-    if (departure_hour.minutes + duration.minutes >= 60 && departure_hour.hour + duration.hour >= 24){
+    if (departure_hour.minutes + duration.minutes >= 60 && departure_hour.hour + duration.hour >= 23){
         arrival_hour.hour = departure_hour.hour + duration.hour + 1  - 24;
         arrival_hour.minutes = departure_hour.minutes + duration.minutes - 60;
         return arrival_hour;
@@ -517,38 +527,63 @@ Hour get_arrival_hour(Hour departure_hour, Hour duration){  /*get_arrival_hour: 
 }
 
 
+Date monthjan(Date actualdate){ /*monthjan: receives a date that has 31 days and changes the month or year if necessary. Returns the corrected date*/
+    if (actualdate.day > 31){
+        actualdate.day = 1;
+        actualdate.month ++;
+        if (actualdate.month > 12){
+            actualdate.month = 1;
+            actualdate.year ++;
+        }
+    }
+    return actualdate;
+}
+
+
+Date monthmarch(Date actualdate){ /*monthmarch: receives a date that has 30 days and changes the month or year if necessary. Returns the corrected date*/
+    if (actualdate.day > 30){
+        actualdate.day = 1;
+        actualdate.month ++;
+    }
+    return actualdate;
+}
+
+
+Date monthfeb(Date actualdate){ /*monthfeb: receives a date that has 28 days and changes the month or year if necessary. Returns the corrected date*/
+    if (actualdate.day > 28){
+            actualdate.day = 1;
+            actualdate.month ++;
+    }
+    return actualdate;
+}
+
+
+int typemonth(Date actualdate){ /*type: receives a date and returns the month type*/
+    if (actualdate.month == 1 || actualdate.month == 3 || actualdate.month == 5 || actualdate.month == 7 || actualdate.month == 8 || actualdate.month == 10 || actualdate.month == 12){
+        return 31;
+    }
+    else if (actualdate.month == 4 || actualdate.month == 6 || actualdate.month == 9 || actualdate.month == 11){
+        return 30;
+    }
+    else{
+        return 28;
+    }
+}
 Date get_arrival_date(Hour departure_hour, Hour arrival_hour, Date actualdate){ /*get_arrival_date: reveives the departure hour, arrival hour and departure date and returns the arrival date*/
+    int type = 0;
+    type++;
     if (arrival_hour.hour < departure_hour.hour){
         actualdate.day++;
-        if (actualdate.month == 1 || actualdate.month == 3 || actualdate.month == 5 || actualdate.month == 7 || actualdate.month == 8 || actualdate.month == 10 || actualdate.month == 12){
-            if (actualdate.day > 31){
-                actualdate.day = 1;
-                actualdate.month ++;
-                if (actualdate.month > 12){
-                    actualdate.month = 1;
-                    actualdate.year ++;
-                }
-            }
-        }
-        if (actualdate.month == 4 || actualdate.month == 6 || actualdate.month == 9 || actualdate.month == 11){
-            if (actualdate.day > 30){
-                actualdate.day = 1;
-                actualdate.month ++;
-                if (actualdate.month > 12){
-                    actualdate.year ++;
-                }
-            }
-        }
-        if (actualdate.month == 2){
-            if (actualdate.day > 28){
-                actualdate.day = 1;
-                actualdate.month ++;
-                if (actualdate.month > 12){
-                    actualdate.month = 1;
-                    actualdate.year ++;
-                }
-            }
-        }
+    }
+    type = typemonth(actualdate);
+    if (typemonth(actualdate) == 31){
+        return monthjan(actualdate);
+    }
+    else if (typemonth(actualdate) == 30){
+        return monthmarch(actualdate);
+    }
+    else if (typemonth(actualdate) == 28){
+        return monthfeb(actualdate);
     }
     return actualdate;
 }
@@ -556,7 +591,7 @@ Date get_arrival_date(Hour departure_hour, Hour arrival_hour, Date actualdate){ 
 
 void newFlight(char *command){  /*newFlight: receives a command and creates a flight in list_flights*/
     Flight flight;
-    int i = 0 , e = 0, valid, empty;
+    int i = 0 , e = 0, valid = 0, empty = 0;
     for (i = 1; command[i] == ' ' || command[i] == '\t'; i++){
     }
     for (i = i; command[i] != ' ' && command[i] != '\t'; i++){
@@ -603,6 +638,7 @@ void newFlight(char *command){  /*newFlight: receives a command and creates a fl
     flight.arrival_date = get_arrival_date(flight.departure_hour, flight.arrival_hour, flight.departure_date);
     valid = validflight(flight);
     if(valid == 1){
+        list_airports[AptbyId(flight.departure)].departures++;
         for (i = 0; i < FLIGHTS_MAX; i++){
             empty = strcmp(list_flights[i].id, "\0\0\0\0\0");
             if (empty == 0){
@@ -612,6 +648,7 @@ void newFlight(char *command){  /*newFlight: receives a command and creates a fl
         }
     }
 }
+
 
 
 void printdate(Date date){ /*printdate: receives a date and prints it out*/
@@ -624,6 +661,7 @@ void printhour(Hour hour){/*printhour: receives a hour and prints it out*/
 
 void list_all_Flights(void){    /*list_all_flights: prints all flights*/
     int i, empty;
+    /*runs through list_flight[i].id and prints all existing flights*/
     for (i = 0; i < FLIGHTS_MAX; i++){
         empty = strcmp(list_flights[i].id, "\0\0\0");
         if (empty == 0){
@@ -637,7 +675,6 @@ void list_all_Flights(void){    /*list_all_flights: prints all flights*/
     }
 }
 
-
 void flight(char * command){ /*flight: receives a ccommand and calls the right funcion: l->list_all_Flighs; if l (...) -> creates a new flight*/
     if (strlen(command) == 1){
         list_all_Flights();
@@ -646,6 +683,7 @@ void flight(char * command){ /*flight: receives a ccommand and calls the right f
         newFlight(command);
     }
 }
+
 
 
 void changedate(char *command){ /*changedate: receives a command and changes today date*/
@@ -691,7 +729,7 @@ int comparate_date(Date date1, Date date2){ /*comparate_date: receives 2 dates a
     return 2;
 }
 
-int comparate_time(Hour time1, Hour time2){ /*comparate_date: receives 2hours and returns 1 if hour2 > hour2 and 0 if date2 > date1 */
+int comparate_time(Hour time1, Hour time2){ /*comparate_date: receives 2 different hours and returns 1 if hour1 > hour2 and 0 if hour2 > hour1 */
     if (time1.hour > time2.hour){
         return 1;
     }
@@ -703,7 +741,7 @@ int comparate_time(Hour time1, Hour time2){ /*comparate_date: receives 2hours an
 
 
 void sortbydatepfunc(Flight *flightlistptr ,Flight flist[FLIGHTS_MAX], int size){   /*sortbydatepfunc: receibes a flight list pointer, a flights list and the quantity of flihts. Sorts the list by the most old departure date*/
-    int i = 0, minors;
+    int i = 0, minors = 0;
     Flight flightlist[FLIGHTS_MAX];
     Flight temp;
     for (i = 0; i < size; i++){
@@ -719,6 +757,7 @@ void sortbydatepfunc(Flight *flightlistptr ,Flight flist[FLIGHTS_MAX], int size)
                     i = -1;
                 }
                 else{
+                    /*changes the position of flight i to i+1 and of flight i+1 to i*/
                     temp = flightlist[i+1];
                     flightlistptr[i+1] = flightlist[i];
                     flightlistptr[i] = temp;
@@ -749,6 +788,7 @@ void sortbydatepfunc(Flight *flightlistptr ,Flight flist[FLIGHTS_MAX], int size)
                 minors = 0;
             }
             else{
+                /*changes the position of flight i to i+1 and of flight i+1 to i*/
                 temp = flightlist[i+1];
                 flightlistptr[i+1] = flightlist[i];
                 flightlistptr[i] = temp;
@@ -762,7 +802,7 @@ void sortbydatepfunc(Flight *flightlistptr ,Flight flist[FLIGHTS_MAX], int size)
 
 
 void sortbydatecfunc(Flight *flightlistptr ,Flight flist[FLIGHTS_MAX], int size){   /*sortbydatepfunc: receibes a flight list pointer, a flights list and the quantity of flihts. Sorts the list by the most old arrival date*/
-    int i = 0, minors;
+    int i = 0, minors = 0;
     Flight flightlist[FLIGHTS_MAX];
     Flight temp;
     for (i = 0; i < size; i++){
@@ -778,6 +818,7 @@ void sortbydatecfunc(Flight *flightlistptr ,Flight flist[FLIGHTS_MAX], int size)
                     i = -1;
                 }
                 else{
+                    /*changes the position of flight i to i+1 and of flight i+1 to i*/
                     temp = flightlist[i+1];
                     flightlistptr[i+1] = flightlist[i];
                     flightlistptr[i] = temp;
@@ -805,6 +846,7 @@ void sortbydatecfunc(Flight *flightlistptr ,Flight flist[FLIGHTS_MAX], int size)
                 i = -1;
             }
             else{
+                /*changes the position of flight i to i+1 and of flight i+1 to i*/
                 temp = flightlist[i+1];
                 flightlistptr[i+1] = flightlist[i];
                 flightlistptr[i] = temp;
@@ -819,6 +861,8 @@ void sortbydatecfunc(Flight *flightlistptr ,Flight flist[FLIGHTS_MAX], int size)
 void listp(char *id){   /*receives an Apirport Id and prints all flights departing or departed from it*/
     Flight flightslist[FLIGHTS_MAX];
     int i = 0, equal = 0, e = 0, empty;
+    /*goes through list_flights list and adds to flightslist the flight id that
+        departures from the ID's airport*/
     for (i = 0; i < FLIGHTS_MAX; i++){
         empty =strcmp(list_flights[i].departure, "");
         if (empty == 0){
@@ -845,11 +889,13 @@ void pfunc(char *command){  /*pfunc: receives a command and if the airport exist
     int i = 1, e = 0, equal, exists;
     char id[ID_SIZE];
     i = getnext(command, i);
+    /*gets airport's ID*/
     for (i = i; e < ID_SIZE; i++){
         id[e] = command[i];
         e++;
     }
     id[3] = '\0';
+    /*verifies if that airport exists*/
     for (i = 0; i < AIRPORTS_MAX; i++){
         equal = strcmp(id, list_airports[i].id);
         if (equal == 0){
@@ -870,6 +916,8 @@ void pfunc(char *command){  /*pfunc: receives a command and if the airport exist
 void listc(char *id){   /*listc: receives an Apirport Id and prints all flights departing or departed from it*/
     Flight flightslist[FLIGHTS_MAX];
     int i = 0, equal = 0, e = 0, empty;
+    /*go through list_flights list and adds to flightslist the flight id that
+        arrivals at ID's airport*/
     for (i = 0; i < FLIGHTS_MAX; i++){
         empty =strcmp(list_flights[i].arrival, "");
         if (empty == 0){
@@ -896,11 +944,13 @@ void cfunc(char *command){  /*cfunc: receives a command and if the airport exist
     int i = 1, e = 0, equal, exists;
     char id[ID_SIZE];
     i = getnext(command, i);
+    /*gets airport's ID*/
     for (i = i; e < ID_SIZE; i++){
         id[e] = command[i];
         e++;
     }
     id[3] = '\0';
+    /*verifies if that airports exists*/
     for (i = 0; i < AIRPORTS_MAX; i++){
         equal = strcmp(id, list_airports[i].id);
         if (equal == 0){
