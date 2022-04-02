@@ -1,0 +1,19 @@
+5,6c5,7
+< invalid duration
+< invalid duration
+---
+> AA1111 AAA AAD 16-03-2022 14:50
+> AA1111 AAA AAD 16-03-2022 14:50
+> AA1112 AAB AAC 16-03-2022 14:50
+8c9
+< invalid duration
+---
+> flight already exists
+12,13d12
+< invalid duration
+< invalid duration
+15a15,18
+> AA1111 AAA AAD 16-03-2022 14:50
+> AA1112 AAB AAC 16-03-2022 14:50
+> AA1112 AAB AAC 31-12-2022 14:50
+> AA1112 AAB AAC 01-01-2023 14:50
