@@ -745,7 +745,7 @@ void sortbydatepfunc(Flight *flightlistptr ,Flight flist[FLIGHTS_MAX], int size)
     for (i = 0; i < size; i++){
         flightlist[i] = flist[i];
     } 
-    for (i = 0; i < size; i++){
+    for (i = 1; i < size; i++){
         if (minors == size - 1){
             break;
         }
@@ -806,50 +806,44 @@ void sortbydatecfunc(Flight *flightlistptr ,Flight flist[FLIGHTS_MAX], int size)
     for (i = 0; i < size; i++){
         flightlist[i] = flist[i];
     } 
-    for (i = 0; i < size; i++){
+    for (i = 1; i < size; i++){
         if (minors == size - 1){
             break;
         }
-        if (comparate_date(flightlist[i].arrival_date, flightlist[i+1].arrival_date) == 0){
-            if (comparate_time(flightlist[i].arrival_hour, flightlist[i+1].arrival_hour) == 1){
+        if (comparate_date(flightlist[i-1].arrival_date, flightlist[i].arrival_date) == 0){
+            if (comparate_time(flightlist[i-1].arrival_hour, flightlist[i].arrival_hour) == 1){
+                temp = flightlist[i];
+                flightlistptr[i] = flightlist[i-1];
+                flightlistptr[i-1] = temp;
+                flightlist[i] = flightlist[i-1];
+                flightlist[i-1] = temp;
+                minors = 0;
                 if (i + 1 == size){
-                    i = -1;
-                }
-                else{
-                    /*changes the position of flight i to i+1 and of flight i+1 to i*/
-                    temp = flightlist[i+1];
-                    flightlistptr[i+1] = flightlist[i];
-                    flightlistptr[i] = temp;
-                    flightlist[i+1] = flightlist[i];
-                    flightlist[i] = temp;
-                    minors = 0;
+                    i = 0;
                 }
             }
-            else if (comparate_time(flightlist[i].arrival_hour, flightlist[i+1].arrival_hour) == 0){
+            else if (comparate_time(flightlist[i-1].arrival_hour, flightlist[i].arrival_hour) == 0){
                 minors++;
                 if (i + 1 == size){
-                    i = -1;
+                    i = 0;
                 }
             }
         }
-        else if(comparate_date(flightlist[i].arrival_date, flightlist[i+1].arrival_date) == 1){
+        else if(comparate_date(flightlist[i-1].arrival_date, flightlist[i].arrival_date) == 1){
             minors ++;
             if (i + 1 == size){
-                    i = -1;
-            }
+                i = 0;
+            }   
         }
         else{
+            temp = flightlist[i];
+            flightlistptr[i] = flightlist[i-1];
+            flightlistptr[i-1] = temp;
+            flightlist[i] = flightlist[i-1];
+            flightlist[i-1] = temp;
             minors = 0;
             if (i + 1 == size){
-                i = -1;
-            }
-            else{
-                /*changes the position of flight i to i+1 and of flight i+1 to i*/
-                temp = flightlist[i+1];
-                flightlistptr[i+1] = flightlist[i];
-                flightlistptr[i] = temp;
-                flightlist[i+1] = flightlist[i];
-                flightlist[i] = temp;
+                i = 0;
             }
         }
     }
