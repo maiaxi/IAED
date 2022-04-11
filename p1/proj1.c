@@ -256,26 +256,24 @@ void sort(char list[AIRPORTS_MAX][ID_SIZE], int size){  /*sort: receives an arra
     char temp[ID_SIZE] = "\0";
     /*compares i position id with i + 1 position id and if i position i > i + i, switch places. If i position < i + 1 position
         increments minors by 1 and if minors = size - 1 (number of comparations), the list is sorted and breaks the loop*/
-    for (i = 0; i < size; i++){
-        compare = strcmp(list[i], list[i+1]);   /*if >0 , list[i]>list[i+1] */
+    for (i = 1; i < size; i++){
+        compare = strcmp(list[i-1], list[i]);   /*if >0 , list[i]>list[i+1] */
         if (minors == size-1){
             break;
         }
         if(compare > 0){
             minors = 0;
+            strcpy(temp, list[i-1]);
+            strcpy(list[i-1], list[i]);
+            strcpy(list[i], temp);  
             if(i + 1 == size){
-                i=-1;
-            }
-            else{
-                strcpy(temp, list[i]);
-                strcpy(list[i], list[i+1]);
-                strcpy(list[i+1], temp);    
+                i=0;
             }
         }
         if(compare < 0){
             minors++;
             if(i + 1 == size){
-                i=-1;
+                i=0;
             }   
 }   }   }
 
@@ -747,28 +745,25 @@ void sortbydatepfunc(Flight *flightlistptr ,Flight flist[FLIGHTS_MAX], int size)
     for (i = 0; i < size; i++){
         flightlist[i] = flist[i];
     } 
-    for (i = 0; i < size; i++){
+    for (i = 1; i < size; i++){
         if (minors == size - 1){
             break;
         }
-        if (comparate_date(flightlist[i].departure_date, flightlist[i+1].departure_date) == 0){
-            if (comparate_time(flightlist[i].departure_hour, flightlist[i+1].departure_hour) == 1){
+        if (comparate_date(flightlist[i-1].departure_date, flightlist[i].departure_date) == 0){
+            if (comparate_time(flightlist[i-1].departure_hour, flightlist[i].departure_hour) == 1){
+                temp = flightlist[i];
+                flightlistptr[i] = flightlist[i-1];
+                flightlistptr[i-1] = temp;
+                flightlist[i] = flightlist[i-1];
+                flightlist[i-1] = temp;
+                minors = 0;
                 if (i + 1 == size){
-                    i = -1;
-                }
-                else{
-                    /*changes the position of flight i to i+1 and of flight i+1 to i*/
-                    temp = flightlist[i+1];
-                    flightlistptr[i+1] = flightlist[i];
-                    flightlistptr[i] = temp;
-                    flightlist[i+1] = flightlist[i];
-                    flightlist[i] = temp;
-                    minors = 0;
+                    i = 0;
                 }
             }
-            else if (comparate_time(flightlist[i].departure_hour, flightlist[i+1].departure_hour) == 0){
+            else if (comparate_time(flightlist[i-1].departure_hour, flightlist[i].departure_hour) == 0){
                 if (i + 1 == size){
-                    i = -1;
+                    i = 0;
                     minors++;
                 }
                 else{
@@ -776,24 +771,21 @@ void sortbydatepfunc(Flight *flightlistptr ,Flight flist[FLIGHTS_MAX], int size)
                 }
             }
         }
-        else if(comparate_date(flightlist[i].departure_date, flightlist[i+1].departure_date) == 1){
+        else if(comparate_date(flightlist[i-1].departure_date, flightlist[i].departure_date) == 1){
             minors ++;
             if (i + 1 == size){
-                    i = -1;
+                    i = 0;
             }
         }
         else{
+            temp = flightlist[i];
+            flightlistptr[i] = flightlist[i-1];
+            flightlistptr[i-1] = temp;
+            flightlist[i] = flightlist[i-1];
+            flightlist[i-1] = temp;
+            minors = 0;
             if (i + 1 == size){
-                i = -1;
-                minors = 0;
-            }
-            else{
-                /*changes the position of flight i to i+1 and of flight i+1 to i*/
-                temp = flightlist[i+1];
-                flightlistptr[i+1] = flightlist[i];
-                flightlistptr[i] = temp;
-                flightlist[i+1] = flightlist[i];
-                flightlist[i] = temp;
+                i = 0;
                 minors = 0;
             }
         }
@@ -801,57 +793,53 @@ void sortbydatepfunc(Flight *flightlistptr ,Flight flist[FLIGHTS_MAX], int size)
 }
 
 
-void sortbydatecfunc(Flight *flightlistptr ,Flight flist[FLIGHTS_MAX], int size){   /*sortbydatepfunc: receibes a flight list pointer, a flights list and the quantity of flihts. Sorts the list by the most old arrival date*/
+void sortbydatecfunc(Flight *flightlistptr ,Flight flist[FLIGHTS_MAX], int size){   /*sortbydatecfunc: receives a flight list pointer, a flights list and the quantity of flihts. Sorts the list by the most old arrival date*/
     int i = 0, minors = 0;
     Flight flightlist[FLIGHTS_MAX];
     Flight temp;
     for (i = 0; i < size; i++){
         flightlist[i] = flist[i];
     } 
-    for (i = 0; i < size; i++){
+    for (i = 1; i < size; i++){
         if (minors == size - 1){
             break;
         }
-        if (comparate_date(flightlist[i].arrival_date, flightlist[i+1].arrival_date) == 0){
-            if (comparate_time(flightlist[i].arrival_hour, flightlist[i+1].arrival_hour) == 1){
+        if (comparate_date(flightlist[i-1].arrival_date, flightlist[i].arrival_date) == 0){
+            if (comparate_time(flightlist[i-1].arrival_hour, flightlist[i].arrival_hour) == 1){
+                /*changes the position of flight i to i+1 and of flight i+1 to i*/
+                temp = flightlist[i];
+                flightlistptr[i] = flightlist[i-1];
+                flightlistptr[i-1] = temp;
+                flightlist[i] = flightlist[i-1];
+                flightlist[i-1] = temp;
+                minors = 0;                
                 if (i + 1 == size){
-                    i = -1;
-                }
-                else{
-                    /*changes the position of flight i to i+1 and of flight i+1 to i*/
-                    temp = flightlist[i+1];
-                    flightlistptr[i+1] = flightlist[i];
-                    flightlistptr[i] = temp;
-                    flightlist[i+1] = flightlist[i];
-                    flightlist[i] = temp;
-                    minors = 0;
+                    i = 0;
                 }
             }
-            else if (comparate_time(flightlist[i].arrival_hour, flightlist[i+1].arrival_hour) == 0){
+            else if (comparate_time(flightlist[i-1].arrival_hour, flightlist[i].arrival_hour) == 0){
                 minors++;
                 if (i + 1 == size){
-                    i = -1;
+                    i = 0;
                 }
             }
         }
-        else if(comparate_date(flightlist[i].arrival_date, flightlist[i+1].arrival_date) == 1){
+        else if(comparate_date(flightlist[i-1].arrival_date, flightlist[i].arrival_date) == 1){
             minors ++;
             if (i + 1 == size){
-                    i = -1;
+                i = 0;
             }
         }
         else{
+            /*changes the position of flight i to i+1 and of flight i+1 to i*/
+            temp = flightlist[i];
+            flightlistptr[i] = flightlist[i-1];
+            flightlistptr[i-1] = temp;
+            flightlist[i] = flightlist[i-1];
+            flightlist[i-1] = temp;
             minors = 0;
             if (i + 1 == size){
-                i = -1;
-            }
-            else{
-                /*changes the position of flight i to i+1 and of flight i+1 to i*/
-                temp = flightlist[i+1];
-                flightlistptr[i+1] = flightlist[i];
-                flightlistptr[i] = temp;
-                flightlist[i+1] = flightlist[i];
-                flightlist[i] = temp;
+                i = 0;
             }
         }
     }
@@ -974,6 +962,7 @@ int main(void){
     today.day = 1;
     today.month = 1;
     today.year = 2022;
+    command[0] = '\0';
     while (command[0]!= 'q'){
         fflush(stdin);
         scanf("%[^\n]%*c", command);
