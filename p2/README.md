@@ -1,10 +1,11 @@
-# Enunciado do Projecto 2 - IAED 2021/22
+# Enunciado do Projecto 2 - IAED 2021/2022
 
 ## Data de entrega: 20 de Abril de 2022, às 19h59m
 
 ## LOG alterações
 
 - 4-abr-22 - Publicação do enunciado.
+- 7-abr-22 - Clarificação do código de reserva e do comando __e__.
 
 ## 1. Introdução
 
@@ -35,8 +36,8 @@ comandos listados na tabela seguinte, bem como as operações a executar.
 
 | Comando | Acção |
 |:---:|:---|
-| __r__ | adiciona uma reserva ou lista as reserva de um voo |
-| __e__ | elimina um voo ou reserva |
+| __r__ | adiciona uma reserva ou lista as reservas de um voo |
+| __e__ | elimina voos ou reserva |
 
 ## 2. Especificação do problema
 
@@ -56,8 +57,6 @@ na forma de um conjunto de linhas iniciadas por uma palavra, que se passa a
 designar por _comando_, seguido de um número de informações dependente do
 comando a executar.
 Os comandos e os argumentos são separados por espaços ou tabuladores.
-No entanto, o último argumento pode conter espaços ou tabuladores se for um `<valor>`,
-sendo que um `<valor>` não tem espaços ou tabuladores no início ou no fim.
 
 Cada comando indica uma determinada ação que se passa a caracterizar em
 termos de formato de entrada, formato de saída, e erros.
@@ -67,18 +66,18 @@ Os comandos adicionais são:
 
 * __r__ - adiciona uma reserva ou lista as reserva de um voo:
     * Formato de entrada: `r <códigoVoo> <data> [<códigoReserva> <númeroPassageiros>]`
-    * Formato de saída: `<códigoReserva> <númeroPassageiros>` para cada reserva no voo com o código `<códigoVoo>` na data `<data>`. Uma reserva por linha por ordem do código de reserva.
+    * Formato de saída: `<códigoReserva> <númeroPassageiros>` para cada reserva no voo com o código `<códigoVoo>` na data `<data>`. Uma reserva por linha por ordem lexicográfica do código de reserva.
     * Erros:
-        * `invalid reservation code` no caso do código da reserva não ser uma string composta apenas por maíusculas e digitos.
+        * `invalid reservation code` no caso do código da reserva não ser uma string composta apenas por maíusculas e digitos ou se for composto por menos de 10 caracteres.
         * `<códigoVoo>: flight does not exist` no caso de não existir um voo com o código na data indicada.
         * `<códigoReserva>: flight reservation already used` no caso de já existir uma reserva com o `<códigoReserva>` indicado.
         * `too many reservations` no caso da reserva, a ser criada, exceda a capacidade do voo.
         * `invalid date` no caso de ser uma data no passado ou mais de um ano no futuro.
-        * `invalid passager number` no caso do número de passageiros não seja um inteiro superior a 0.
+        * `invalid passenger number` no caso do número de passageiros não seja um inteiro superior a 0.
 
-* __e__ - elimina um voo ou reserva:
+* __e__ - elimina voos ou reserva:
     * Formato de entrada: `e <código>`
-    * Formato de saída: Apaga o voo ou reserva associado ao `<código>` indicado. Caso se trate de um voo também devem ser eliminadas todas as reservas associadas a esse voo.
+    * Formato de saída: Apaga todos os voos ou a reserva com o `<código>` indicado. Caso se trate de um código de voo também devem ser eliminadas todas as reservas associadas aos voos removidos.
     * Erros:
         * `not found` no caso de não existir o `<código>`.
 
