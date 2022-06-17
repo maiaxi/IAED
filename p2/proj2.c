@@ -1,14 +1,27 @@
+/*Project 2 made by Joao Maia, number 102428
+IAED, Instituto Superior Tecnico*/
 #include<stdio.h>
 #include<stdlib.h>
-#include<ctype.h>
 #include<string.h>
-#define COM_DIM 161
+#define COM_DIM 65535
 #define ID_SIZE 4
 #define COUNTRY_SIZE 31
 #define CITY_SIZE 51
 #define AIRPORTS_MAX 40
 #define F_IDSIZE 7
 #define FLIGHTS_MAX 30000
+#define TRUE 1
+#define FALSE 0
+
+
+/*structures*/
+typedef struct Reserves {
+    char *id;
+    int passangers;
+    int flightindex;
+    struct Reserves *before;
+    struct Reserves *next;
+} Reserves;
 
 
 typedef struct Date{
@@ -24,9 +37,6 @@ typedef struct Hour{
 }Hour;
 
 
-Date today;
-
-
 typedef struct Flight{
     char id[F_IDSIZE];
     char departure[ID_SIZE];
@@ -37,6 +47,7 @@ typedef struct Flight{
     Date arrival_date;
     Hour duration;
     int capacity;
+    int number_of_passangers;
 }Flight;
 
 
@@ -48,12 +59,31 @@ typedef struct Airport{
 }Airport;
 
 
+/*Global Variables*/
+Reserves *head = NULL;
+
+
+Reserves *tail = NULL;
+
+
+Flight nullflight;
+
+
+int number_of_flights = 0;
+
+
+int number_of_reserves = 0;
+
+
+Date today;
+
+
 Flight list_flights[FLIGHTS_MAX];
 
 
 Airport list_airports[AIRPORTS_MAX];
 
-
+/*Functions*/
 int Pow(int x, int y){    /* Pow: works as the funcion pow defined in math.h. Returns the result of x^y */
 	int power = 1, i;
 	for (i = 1; i <= y; ++i){
@@ -100,7 +130,7 @@ int equaldate(Date date1, Date date2){  /*equaldate: receives 2 Dates and return
 }
 
 
-int dupfid(char *id, int tday, int tmonth, int tyear){  /*dupfid: receives a Flight ID, a day, a month and a year. Returns 0 a flight with that Flight ID exists on that day*/
+int dupfid(char *id, int tday, int tmonth, int tyear){  /*dupfid: receives a Flight ID, a day, a month and a year. Returns 1 if a flight with that Flight ID exists on that day*/
     int i, equal, empty;
     Date date;
     date.day = tday;
@@ -119,20 +149,7 @@ int dupfid(char *id, int tday, int tmonth, int tyear){  /*dupfid: receives a Fli
     return 0;
 }
 
-
-int FlightbyId(char *id){   /*Flightbyid: receives a Flight ID and returns the flight position on List_airports*/
-    int i, equal;
-    for (i = 0; i < FLIGHTS_MAX; i++){
-        equal = strcmp(list_flights[i].id, id);
-        if (equal == 0){
-            break;
-        }
-    }
-    return i;
-}
-
-
-int validatefid(char *id){  /*validatefid: receives a Flight ID and returns 1 if the id is valid and 0 if the id is invalid*/
+int validatefid(char *id){  /*validatefid: receives a Flight ID and returns 1 if the id is valid and 0 if the id is not invalid*/
     int i, len;
     len = strlen(id);
     for (i = 0; i < len; i++){
@@ -495,7 +512,7 @@ int validflight(Flight flight){ /*validflight: receives a flight and returns 1 i
             return 0;
         }
     }
-    if (flight.capacity < 10 || flight.capacity > 100){
+    if (flight.capacity < 10){
         printf("invalid capacity\n");
     }
     return 1;
@@ -634,6 +651,7 @@ void newFlight(char *command){  /*newFlight: receives a command and creates a fl
     flight.capacity = get_capacity(command, i);
     flight.arrival_hour = get_arrival_hour(flight.departure_hour, flight.duration);
     flight.arrival_date = get_arrival_date(flight.departure_hour, flight.arrival_hour, flight.departure_date);
+    flight.number_of_passangers = 0;
     valid = validflight(flight);
     if(valid == 1){
         list_airports[AptbyId(flight.departure)].departures++;
@@ -641,6 +659,7 @@ void newFlight(char *command){  /*newFlight: receives a command and creates a fl
             empty = strcmp(list_flights[i].id, "\0\0\0\0\0");
             if (empty == 0){
                 list_flights[i] = flight;
+                number_of_flights++;
                 break;
             }
         }
@@ -957,13 +976,365 @@ void cfunc(char *command){  /*cfunc: receives a command and if the airport exist
 }
 
 
+int getflight(char *id, Date date){ /*getflight: returns the Index of the flight with that id and departure date*/
+    int i = 0, equal = 0;
+    for( i = 0; i < FLIGHTS_MAX ; i++){
+        equal = strcmp(list_flights[i].id, id);
+        if (equal == 0 && equaldate(date, list_flights[i].departure_date) == 1){
+            return i;
+        }
+    }
+    return i;
+}
+
+
+int validReserveCode(char *reservecode, int codesize){ /*validReserveCode: Returns 1 if the reserve is valid*/
+    int i = 0;
+    if (codesize < 10){
+        return FALSE;
+    }
+    for (i = 0; i < codesize; i++){
+        if (reservecode[i] < '0' || reservecode[i] > 'Z'){
+            return FALSE;
+        }
+        else if(reservecode[i] < 'A' && reservecode[i] > '9'){
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
+
+int duplicatedreservationcode(char *reservecode){
+    int equal = 0;
+    Reserves *temp;
+    for (temp = head; temp != NULL; temp = temp->next){
+        equal = strcmp(reservecode, temp->id);
+        if (equal == 0){
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+
+int validReserve(char *fid, Date date, char *reservecode, int passangers, int codesize){ /*validReserve: Returns 1 if the reserve is valid and prints the errors if the reserve is not valid*/
+    Flight tempflight = list_flights[getflight(fid, date)];
+    if (validReserveCode(reservecode, codesize) == FALSE){
+        printf("invalid reservation code\n");
+        return FALSE;
+    }
+    else if (dupfid(fid, date.day, date.month, date.year) == FALSE){
+        printf("%s: flight does not exist\n", fid);
+        return FALSE;
+    }
+    else if (duplicatedreservationcode(reservecode) == TRUE){
+        printf("%s: flight reservation already used\n", reservecode);
+        return FALSE;
+    }
+    else if (passangers + tempflight.number_of_passangers > tempflight.capacity){
+        printf("too many reservations\n");
+        return FALSE;
+    }
+    else if (validate(date) == FALSE){
+        printf("invalid date\n");
+        return FALSE;
+    }
+    else if (passangers < 0){
+        printf("invalid passenger number\n");
+        return FALSE;
+    }
+    return TRUE;
+}
+
+void printReserves(int flightindex){ /*printReserves: prints all reserves of a specific flight*/
+    Reserves *temp;
+    temp = head;
+    if (validate(list_flights[flightindex].departure_date) == TRUE){
+        for (temp = head; temp != NULL; temp = temp->next){
+            if (temp->flightindex == flightindex){
+                printf("%s %d\n", temp->id, temp->passangers);
+            }
+        }
+    }
+    else{
+        printf("invalid date\n");
+    }
+}
+
+Reserves *create_Reserve(char *reservecode, int passangers, int flightindex){ /*create_Reserve: creates a reserve*/
+    Reserves *final = malloc(sizeof(Reserves));
+    final->id = reservecode;
+    final->passangers = passangers;
+    final->flightindex = flightindex;
+    final->next = NULL;
+    final->before = NULL;
+    return final;
+}
+
+
+void insert_at_the_end(Reserves *Reserve_to_be_inserted){ /*insert_at_the_end: inserts a Reserve at the end of the list*/
+    if (number_of_reserves == 1){
+    Reserve_to_be_inserted->before = tail;
+    Reserve_to_be_inserted->next = NULL;
+    tail = Reserve_to_be_inserted;
+    }
+    else{
+    Reserve_to_be_inserted->before = tail;
+    Reserve_to_be_inserted->next = NULL;
+    tail->next = Reserve_to_be_inserted;
+    tail = Reserve_to_be_inserted;
+    }
+}
+
+
+void insert_at_the_beginning(Reserves *Reserve_to_be_inserted){ /*insert_at_the_beginning: inserts a Reserve at the beginning of the list*/
+    if(number_of_reserves == 1){
+        head->next = tail;
+        tail = head;
+        Reserve_to_be_inserted->next = head;
+        Reserve_to_be_inserted->before = NULL;
+        head = Reserve_to_be_inserted;
+        tail -> before = head;
+    }
+    else{
+        Reserve_to_be_inserted->next = head;
+        Reserve_to_be_inserted->before = NULL;
+        head = Reserve_to_be_inserted;
+    }
+}
+
+
+void insert_before(Reserves *Reserve_to_insert_before, Reserves *Reserve_to_be_inserted){ /*insert_before: inserts a Reserve before a given reserve*/
+    Reserve_to_insert_before->before->next = Reserve_to_be_inserted;
+    Reserve_to_be_inserted->before = Reserve_to_insert_before->before;
+    Reserve_to_be_inserted->next = Reserve_to_insert_before;
+    Reserve_to_insert_before->before = Reserve_to_be_inserted;
+}
+
+
+void insert_Reserve(Reserves *reserveToInsert){ /*insert_Reserve: receives a reserve and calls the right funcion to insert it*/
+    int equal = 0, i = 0;
+    Reserves *temp;
+    if (head == NULL){
+        head = reserveToInsert;
+        head->next = tail;
+        head->before = NULL;
+        number_of_reserves++;
+    }
+    else{
+        for (temp = head; temp != NULL; temp = temp->next, i++){
+            equal = strcmp(reserveToInsert->id, temp->id);
+            if (equal < 0){
+                if (i == 0){
+                    insert_at_the_beginning(reserveToInsert);
+                    number_of_reserves ++;
+                }
+                else{
+                    insert_before(temp, reserveToInsert);
+                    number_of_reserves ++;
+                }
+            }
+        }
+        if (i == number_of_reserves){
+            insert_at_the_end(reserveToInsert);
+            number_of_reserves ++;
+        }
+    }
+}
+
+
+void reserve(char *command){ /*reserve: treats the command string to decide if it is going to print or if it is goingh to add a Reserve*/
+    int i = 1, last = 0, len = strlen(command), codesize = 0, passangers = 0, flightindex = 0;
+    char fid[ID_SIZE + 1], *reservecode;
+    Date date;
+    Reserves *newReserve;
+    i = getnext(command, i);
+    i = getid(command, fid, i);
+    i = getnext(command, i);
+    date = get_date(command, i);
+    i += 10;
+    flightindex = getflight(fid, date);
+    if (i == len){
+        printReserves(flightindex);
+    }
+    else{
+        i = getnext(command, i);
+        last = i;
+        for (i = i; command[i] != ' ' && command[i] != '\t'; i++){
+            codesize ++;
+        }
+        reservecode = malloc(sizeof(char) * (codesize + 1));
+        i = getnext(command, i);
+        passangers = get_capacity(command, i);
+        getid(command, reservecode, last);
+        if (validReserve(fid, date, reservecode, passangers, codesize) == TRUE){
+            newReserve = create_Reserve(reservecode, passangers, flightindex);
+            insert_Reserve(newReserve);
+            list_flights[flightindex].number_of_passangers += passangers;
+        }
+    }
+}
+
+
+void destroy(){
+    Reserves *temp, *nexttemp;
+    for (temp = head; temp != NULL; temp = nexttemp){
+        nexttemp = temp->next;
+        free(temp->id);
+        free(temp);
+    }
+}
+
+
+void deletereserve(Reserves *reserve){
+    Reserves *temp;
+    temp = reserve;
+    if(reserve == head && number_of_reserves == 1){
+        head = NULL;
+    }
+    else if (reserve == head){
+        head = reserve->next;
+        head->before = NULL;
+    }
+    else if (reserve == tail){
+        tail = reserve;
+        tail->next = NULL;
+    }
+    else{
+        reserve = reserve->next;
+        reserve->before = temp->before;
+    }
+}
+
+
+void lesspassangers(Reserves *reserve, int flightindex){
+    list_flights[flightindex].number_of_passangers = list_flights[flightindex].number_of_passangers - reserve->passangers;
+}
+
+
+void deletereservesbyindex(int flightpos){
+    Reserves *temp;
+    for (temp = head; temp != NULL; temp = temp->next){
+        if (temp->flightindex == flightpos){
+            lesspassangers(temp, temp->flightindex);
+            deletereserve(temp);
+            number_of_reserves--;
+        }
+        if (temp->flightindex > flightpos){
+            temp->flightindex--;
+        }
+    }
+}
+
+
+void deleteflights(char *code){
+    int  i = 1, equal = 0, number_of_deleted_flights = 0, initialflightnum = number_of_flights;
+    while (i  <= initialflightnum){
+        equal = strcmp(code, list_flights[i-1].id);
+        if (initialflightnum == 0){
+            printf("not found\n");
+            break;
+        }
+        if (initialflightnum - i + 1 >= number_of_deleted_flights && i != 1){
+            list_flights[i-1] = nullflight;
+            i++;
+        }
+        else if (equal == 0 && number_of_flights == 1){
+            deletereservesbyindex( i-1);
+            list_flights[i-1] = nullflight;
+            deletereservesbyindex( i-1);
+            number_of_deleted_flights++;
+            number_of_flights--;
+            i++;
+        }
+        
+        else if (equal == 0){
+            deletereservesbyindex( i-1 );
+            list_flights[i-1] = list_flights[i];
+            number_of_deleted_flights++;
+            number_of_flights--;
+            i++;
+        }
+        else{
+            i++;
+        }
+    }
+    if (number_of_deleted_flights == 0){
+        printf("not found\n");
+    }
+}
+
+
+Reserves *findreserve(char *code){
+    int equal = 0;
+    Reserves *temp;
+    for (temp = head; temp != NULL; temp = temp->next){
+        equal = strcmp(code, temp->id);
+        if (equal == 0){
+            return temp;
+        }
+    }
+    return temp;
+}
+
+
+void deletereservebycode(char *code){
+    int flightpos = 0;
+    Reserves *temp, *reservetodelete;
+    reservetodelete = findreserve(code);
+    if (reservetodelete == NULL){
+        printf("not found\n");
+    }
+    else{
+        flightpos = reservetodelete->flightindex;
+        for (temp = head; temp != NULL; temp = temp->next){
+            if (reservetodelete == temp){
+                lesspassangers(temp, temp->flightindex);
+                deletereserve(temp);
+                number_of_reserves--;
+            }
+            if (temp->flightindex > flightpos){
+                temp->flightindex--;
+            }
+        }
+    }
+}
+
+void delete(char *command){
+    int i = 1, last = 0, len = strlen(command), codesize = 0;
+    char *code;
+    i = getnext(command, i);
+    last = i;
+    codesize = len -last;
+    if (codesize >F_IDSIZE && codesize < 10){
+        printf("not found\n");
+    }
+    else{
+        code = malloc(sizeof(char)*(codesize+1));
+        i = getid(command, code, i);
+        if (codesize <= F_IDSIZE){
+            deleteflights(code);
+            free(code);
+        }
+        else if (codesize >= 10){
+            deletereservebycode(code);
+            free(code);
+        }
+        else{
+            free(code);
+        }
+    }
+}
+
+
 int main(void){
     char command[COM_DIM];
     today.day = 1;
     today.month = 1;
     today.year = 2022;
-    command[0] = '\0';
-    while (command[0]!= 'q'){
+    command[0] = ' ';
+    while (command[0]){
         fflush(stdin);
         scanf("%[^\n]%*c", command);
           switch (command[0]){
@@ -985,6 +1356,15 @@ int main(void){
             case 'c':
                 cfunc(command);
                 break;
+            case 'r':
+                reserve(command);
+                break;
+            case 'e':
+                delete(command);
+                break;
+            case 'q':
+                destroy();
+                exit(0);
           }
     }
     return 0;
