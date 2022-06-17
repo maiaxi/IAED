@@ -1,4 +1,8 @@
 airport LIS
 airport FAO
+<<<<<<< HEAD
 invalid passenger number
+=======
+invalid passager number
+>>>>>>> a599caf2602e60e26b61a4b13a0a35dc9307b33f
 VX1234GP95 30

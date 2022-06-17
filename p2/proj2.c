@@ -1,15 +1,24 @@
+<<<<<<< HEAD
 /*Project 2 made by Joao Maia, number 102428
 IAED, Instituto Superior Tecnico*/
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 #define COM_DIM 65535
+=======
+#include<stdio.h>
+#include<stdlib.h>
+#include<ctype.h>
+#include<string.h>
+#define COM_DIM 161
+>>>>>>> a599caf2602e60e26b61a4b13a0a35dc9307b33f
 #define ID_SIZE 4
 #define COUNTRY_SIZE 31
 #define CITY_SIZE 51
 #define AIRPORTS_MAX 40
 #define F_IDSIZE 7
 #define FLIGHTS_MAX 30000
+<<<<<<< HEAD
 #define TRUE 1
 #define FALSE 0
 
@@ -22,6 +31,8 @@ typedef struct Reserves {
     struct Reserves *before;
     struct Reserves *next;
 } Reserves;
+=======
+>>>>>>> a599caf2602e60e26b61a4b13a0a35dc9307b33f
 
 
 typedef struct Date{
@@ -37,6 +48,12 @@ typedef struct Hour{
 }Hour;
 
 
+<<<<<<< HEAD
+=======
+Date today;
+
+
+>>>>>>> a599caf2602e60e26b61a4b13a0a35dc9307b33f
 typedef struct Flight{
     char id[F_IDSIZE];
     char departure[ID_SIZE];
@@ -47,7 +64,10 @@ typedef struct Flight{
     Date arrival_date;
     Hour duration;
     int capacity;
+<<<<<<< HEAD
     int number_of_passangers;
+=======
+>>>>>>> a599caf2602e60e26b61a4b13a0a35dc9307b33f
 }Flight;
 
 
@@ -59,6 +79,7 @@ typedef struct Airport{
 }Airport;
 
 
+<<<<<<< HEAD
 /*Global Variables*/
 Reserves *head = NULL;
 
@@ -78,12 +99,18 @@ int number_of_reserves = 0;
 Date today;
 
 
+=======
+>>>>>>> a599caf2602e60e26b61a4b13a0a35dc9307b33f
 Flight list_flights[FLIGHTS_MAX];
 
 
 Airport list_airports[AIRPORTS_MAX];
 
+<<<<<<< HEAD
 /*Functions*/
+=======
+
+>>>>>>> a599caf2602e60e26b61a4b13a0a35dc9307b33f
 int Pow(int x, int y){    /* Pow: works as the funcion pow defined in math.h. Returns the result of x^y */
 	int power = 1, i;
 	for (i = 1; i <= y; ++i){
@@ -130,7 +157,11 @@ int equaldate(Date date1, Date date2){  /*equaldate: receives 2 Dates and return
 }
 
 
+<<<<<<< HEAD
 int dupfid(char *id, int tday, int tmonth, int tyear){  /*dupfid: receives a Flight ID, a day, a month and a year. Returns 1 if a flight with that Flight ID exists on that day*/
+=======
+int dupfid(char *id, int tday, int tmonth, int tyear){  /*dupfid: receives a Flight ID, a day, a month and a year. Returns 0 a flight with that Flight ID exists on that day*/
+>>>>>>> a599caf2602e60e26b61a4b13a0a35dc9307b33f
     int i, equal, empty;
     Date date;
     date.day = tday;
@@ -149,7 +180,24 @@ int dupfid(char *id, int tday, int tmonth, int tyear){  /*dupfid: receives a Fli
     return 0;
 }
 
+<<<<<<< HEAD
 int validatefid(char *id){  /*validatefid: receives a Flight ID and returns 1 if the id is valid and 0 if the id is not invalid*/
+=======
+
+int FlightbyId(char *id){   /*Flightbyid: receives a Flight ID and returns the flight position on List_airports*/
+    int i, equal;
+    for (i = 0; i < FLIGHTS_MAX; i++){
+        equal = strcmp(list_flights[i].id, id);
+        if (equal == 0){
+            break;
+        }
+    }
+    return i;
+}
+
+
+int validatefid(char *id){  /*validatefid: receives a Flight ID and returns 1 if the id is valid and 0 if the id is invalid*/
+>>>>>>> a599caf2602e60e26b61a4b13a0a35dc9307b33f
     int i, len;
     len = strlen(id);
     for (i = 0; i < len; i++){
@@ -512,7 +560,11 @@ int validflight(Flight flight){ /*validflight: receives a flight and returns 1 i
             return 0;
         }
     }
+<<<<<<< HEAD
     if (flight.capacity < 10){
+=======
+    if (flight.capacity < 10 || flight.capacity > 100){
+>>>>>>> a599caf2602e60e26b61a4b13a0a35dc9307b33f
         printf("invalid capacity\n");
     }
     return 1;
@@ -651,7 +703,10 @@ void newFlight(char *command){  /*newFlight: receives a command and creates a fl
     flight.capacity = get_capacity(command, i);
     flight.arrival_hour = get_arrival_hour(flight.departure_hour, flight.duration);
     flight.arrival_date = get_arrival_date(flight.departure_hour, flight.arrival_hour, flight.departure_date);
+<<<<<<< HEAD
     flight.number_of_passangers = 0;
+=======
+>>>>>>> a599caf2602e60e26b61a4b13a0a35dc9307b33f
     valid = validflight(flight);
     if(valid == 1){
         list_airports[AptbyId(flight.departure)].departures++;
@@ -659,7 +714,10 @@ void newFlight(char *command){  /*newFlight: receives a command and creates a fl
             empty = strcmp(list_flights[i].id, "\0\0\0\0\0");
             if (empty == 0){
                 list_flights[i] = flight;
+<<<<<<< HEAD
                 number_of_flights++;
+=======
+>>>>>>> a599caf2602e60e26b61a4b13a0a35dc9307b33f
                 break;
             }
         }
@@ -976,6 +1034,7 @@ void cfunc(char *command){  /*cfunc: receives a command and if the airport exist
 }
 
 
+<<<<<<< HEAD
 int getflight(char *id, Date date){ /*getflight: returns the Index of the flight with that id and departure date*/
     int i = 0, equal = 0;
     for( i = 0; i < FLIGHTS_MAX ; i++){
@@ -1328,13 +1387,20 @@ void delete(char *command){
 }
 
 
+=======
+>>>>>>> a599caf2602e60e26b61a4b13a0a35dc9307b33f
 int main(void){
     char command[COM_DIM];
     today.day = 1;
     today.month = 1;
     today.year = 2022;
+<<<<<<< HEAD
     command[0] = ' ';
     while (command[0]){
+=======
+    command[0] = '\0';
+    while (command[0]!= 'q'){
+>>>>>>> a599caf2602e60e26b61a4b13a0a35dc9307b33f
         fflush(stdin);
         scanf("%[^\n]%*c", command);
           switch (command[0]){
@@ -1356,6 +1422,7 @@ int main(void){
             case 'c':
                 cfunc(command);
                 break;
+<<<<<<< HEAD
             case 'r':
                 reserve(command);
                 break;
@@ -1365,6 +1432,8 @@ int main(void){
             case 'q':
                 destroy();
                 exit(0);
+=======
+>>>>>>> a599caf2602e60e26b61a4b13a0a35dc9307b33f
           }
     }
     return 0;
